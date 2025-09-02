@@ -115,10 +115,13 @@ const tick = () => {
   //particles
   for (let i = 0; i < count; i++) {
     const i3 = i * 3;
+    const i2 = i * 2;
     const x = particleGeometry.attributes.position.array[i3];
+    const z = particleGeometry.attributes.position.array[i3 + 2];
     particleGeometry.attributes.position.array[i3 + 1] = Math.sin(
       elapsedTime + x
     );
+    particleGeometry.attributes.position.array[i2] = Math.cos(elapsedTime + z);
   }
   particleGeometry.attributes.position.needsUpdate = true;
 
