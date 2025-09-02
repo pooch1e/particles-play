@@ -18,18 +18,36 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-
+const particleTexture = textureLoader.load('/textures/particles/5.png');
 /**
  * Particles
  */
 
-const particleGeometry = new THREE.SphereGeometry(1, 32, 32);
+// const particleGeometry = new THREE.SphereGeometry(1, 32, 32);
 
+// Playing with random geometry
+const particleGeometry = new THREE.BufferGeometry();
+const count = 1000;
+
+const positions = new Float32Array(count * 3); //x y z vector
+
+for (let i = 0; i < count * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 10; //0.5 to +0.5
+}
+
+particleGeometry.setAttribute(
+  'position',
+  new THREE.BufferAttribute(positions, 3)
+);
 // Material
 const particlesMaterial = new THREE.PointsMaterial({
   size: 0.02,
   sizeAttenuation: true,
+  map: particleTexture,
 });
+
+particlesMaterial.depthWrite = false;
+particlesMaterial.blending = THREE.AdditiveBlending;
 
 // particles
 const particles = new THREE.Points(particleGeometry, particlesMaterial);
@@ -93,6 +111,18 @@ const tick = () => {
 
   // Update controls
   controls.update();
+
+  //particles
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3;
+    const x = particleGeometry.attributes.position.array[i3];
+    particleGeometry.attributes.position.array[i3 + 1] = Math.sin(
+      elapsedTime + x
+    );
+  }
+  particleGeometry.attributes.position.needsUpdate = true;
+
+  //camera
 
   // Render
   renderer.render(scene, camera);
